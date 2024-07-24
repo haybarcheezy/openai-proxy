@@ -11,6 +11,7 @@ const pickHeaders = (headers: Headers, keys: (string | RegExp)[]): Headers => {
   return picked;
 };
 
+
 const CORS_HEADERS: Record<string, string> = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -24,8 +25,11 @@ export default async function handleRequest(req: Request & { nextUrl?: URL }) {
     });
   }
 
+  // Adjust the pathname here to a more generic endpoint or disguise it
   const { pathname, search } = req.nextUrl ? req.nextUrl : new URL(req.url);
-  const url = new URL(pathname + search, "https://api.openai.com").href;
+  const newPathname = pathname.replace("/api/chat/openai", "/api/mycustompath"); // Rename the API endpoint
+  const url = new URL(newPathname + search, "https://api.openai.com").href;
+
   const headers = pickHeaders(req.headers, ["content-type", "authorization"]);
 
   const res = await fetch(url, {
